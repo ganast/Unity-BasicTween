@@ -23,35 +23,37 @@
  
 using UnityEngine;
 
-namespace com.ganast.UnityEngine {
+namespace com.ganast.UnityEngine.Tween {
 
     public class BasicTween {
 
-        public enum InterpolationLogic {
-            LINEAR,
-            SMOOTH,
-            SPRING
-        }
+        /// <summary>
+        /// A delegate for easing functions based on R. Penner's format (TODO: add ref).
+        /// </summary>
+        /// <param name="t">Time (TODO: elaborate)</param>
+        /// <param name="b">Begin (TODO: elaborate) </param>
+        /// <param name="c">Change (TODO: elaborate) </param>
+        /// <param name="d">Duration (TODO: elaborate) </param>
+        /// <returns></returns>
+        public delegate float EasingFunction(float t, float b, float c, float d);
 
         public enum RateLogic {
             SPEED,
             DURATION
         }
 
-        public const float DEFAULT_R = 1.0f;
-
         public const float UNLIMITED = float.NaN;
 
         private float v, v0, v1, t, r, d, vmin, vmax;
-        
-        private InterpolationLogic interpolationLogic;
+
+        private EasingFunction easingFunction;
 
         private RateLogic rateLogic;
 
         private object _lock = new object();
 
-        public BasicTween(float v, float vmin, float vmax, InterpolationLogic interpolationLogic, RateLogic rateLogic, float r) {
-            this.interpolationLogic = interpolationLogic;
+        public BasicTween(float v, float vmin, float vmax, EasingFunction easingFunction, RateLogic rateLogic, float r) {
+            this.easingFunction = easingFunction;
             this.rateLogic = rateLogic;
             this.r = r;
             this.vmin = vmin;
@@ -59,7 +61,7 @@ namespace com.ganast.UnityEngine {
             SetImmediate(v, false);
         }
 
-        public BasicTween(float v, InterpolationLogic interpolationLogic, RateLogic rateLogic, float r)  : this(v, UNLIMITED, UNLIMITED, interpolationLogic, rateLogic, r) {
+        public BasicTween(float v, EasingFunction easingFunction, RateLogic rateLogic, float r) : this(v, UNLIMITED, UNLIMITED, easingFunction, rateLogic, r) {
         }
 
         public float GetValue() {
@@ -96,27 +98,10 @@ namespace com.ganast.UnityEngine {
 
                 if (!Equal(v, v1)) {
 
-                    switch (interpolationLogic) {
+                    t += Time.deltaTime;
 
-                        case InterpolationLogic.LINEAR:
-
-                            // no need to clamp t as Lerp does that anyway...
-                            t += Time.deltaTime;
-
-                            v = Mathf.Lerp(v0, v1, t / d);
-                            break;
-
-                        case InterpolationLogic.SMOOTH:
-
-                            t += Time.deltaTime;
-
-                            v = Mathf.SmoothStep(v0, v1, Mathf.Clamp01(t / d));
-                            break;
-
-                        case InterpolationLogic.SPRING:
-                            v = Mathf.SmoothDamp(v, v1, ref v0, d);
-                            break;
-                    }
+                    // TODO: get value from easing function...
+                    v = easingFunction(t, v0, v1 - v0, d);
                 }
                 else {
                     SetImmediate(v1, false);
@@ -132,30 +117,14 @@ namespace com.ganast.UnityEngine {
                 v = value;
             }
             v = Sanitize(v);
-            switch (interpolationLogic) {
-                case InterpolationLogic.LINEAR:
-                case InterpolationLogic.SMOOTH:
-                    v0 = v;
-                    t = 0.0f;
-                    break;
-                case InterpolationLogic.SPRING:
-                    v0 = 0.0f;
-                    break;
-            }
+            v0 = v;
             v1 = v;
+            t = 0.0f;
         }
 
         private void SetInterpolation(float target, bool relative = false) {
-            switch (interpolationLogic) {
-                case InterpolationLogic.LINEAR:
-                case InterpolationLogic.SMOOTH:
-                    v0 = v;
-                    t = 0.0f;
-                    break;
-                case InterpolationLogic.SPRING:
-                    v0 = 0.0f;
-                    break;
-            }
+            v0 = v;
+            t = 0.0f;
             if (relative) {
                 v1 += target;
             }
