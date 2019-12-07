@@ -1,4 +1,4 @@
-BasicTween v1.0 - A very simple tool for managing values (currently only
+BasicTween v1.2 - A very simple tool for managing values (currently only
 floats) that need to be set directly, interpolated towards a target or
 interpolated within a range easily and transparently.
 
@@ -17,4 +17,4 @@ more details.
 You should have received a copy of the GNU General Public License along with
 this program.  If not, see <https://www.gnu.org/licenses/>.
 
-VERSION: 1.1.0, 20191128
+VERSION: 1.2.0, 20191208

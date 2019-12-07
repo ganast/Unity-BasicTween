@@ -20,10 +20,10 @@
  *
  * VERSION: 1.1.0, 20191128
  */
- 
-using UnityEngine;
 
-namespace com.ganast.UnityEngine.Tween {
+using System; 
+
+namespace com.ganast.Tween {
 
     public class BasicTween {
 
@@ -90,7 +90,7 @@ namespace com.ganast.UnityEngine.Tween {
             }
         }
 
-        public void Update() {
+        public void Update(float dt) {
 
             // Debug.LogFormat("v={0}, v0={1}, v1={2}, dt={3}, t={4}", v, v0, v1, Time.time - t, t);
 
@@ -98,7 +98,7 @@ namespace com.ganast.UnityEngine.Tween {
 
                 if (!Equal(v, v1)) {
 
-                    t += Time.deltaTime;
+                    t += dt;
 
                     // TODO: get value from easing function...
                     v = easingFunction(t, v0, v1 - v0, d);
@@ -137,7 +137,7 @@ namespace com.ganast.UnityEngine.Tween {
                     d = r;
                     break;
                 case RateLogic.SPEED:
-                    d = Mathf.Abs(v1 - v) / r;
+                    d = Math.Abs(v1 - v) / r;
                     break;
             }
         }
@@ -160,7 +160,7 @@ namespace com.ganast.UnityEngine.Tween {
         }
 
         public static bool Equal(float a, float b) {
-            return Mathf.Abs(a - b) < 0.0001f;
+            return Math.Abs(a - b) < 0.0001f;
         }
     }
 }

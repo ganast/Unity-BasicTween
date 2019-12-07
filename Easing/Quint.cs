@@ -2,7 +2,7 @@
 /// TODO: Credit and reference R. Penner's work.
 /// TODO: Add license and copyright.
 /// </summary>
-namespace com.ganast.UnityEngine.Tween.Easing {
+namespace com.ganast.Tween.Easing {
 
     public static class Quint {
 
