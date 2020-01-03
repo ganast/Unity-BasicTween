@@ -1,25 +1,26 @@
-﻿/**
- * BasicTween v1.2 - A very simple tool for managing values (currently only
- * floats) that need to be set directly, interpolated towards a target or
- * interpolated within a range easily and transparently.
- *
- * Copyright (C) 2019 George Anastassakis (ganast@ganast.com)
- *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * VERSION: 1.2.1, 20191208
- */
+﻿/// BasicTween v1.2 - A very simple tool for managing variables (currently only
+/// floats) that need to be set directly, interpolated towards a target or
+/// interpolated within a range easily and transparently.
+/// 
+/// Copyright (c) 2020 George Anastassakis (ganast@ganast.com)
+/// 
+/// Permission is hereby granted, free of charge, to any person obtaining a copy
+/// of this software and associated documentation files (the "Software"),
+/// to deal in the Software without restriction, including without limitation
+/// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+/// and/or sell copies of the Software, and to permit persons to whom the
+/// Software is furnished to do so, subject to the following conditions:
+/// 
+/// The above copyright notice and this permission notice shall be included in
+/// all copies or substantial portions of the Software.
+/// 
+/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+/// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+/// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+/// IN THE SOFTWARE.
 
 using System;
 
@@ -32,13 +33,14 @@ namespace com.ganast.Tween {
     public class BasicTween {
 
         /// <summary>
-        /// A delegate for easing functions based on R. Penner's format (TODO: add ref).
+        /// A delegate for tweening functions based on R. Penner's format
+        /// <seealso cref="http://robertpenner.com/easing"/>.
         /// </summary>
-        /// <param name="t">Time (TODO: elaborate)</param>
-        /// <param name="b">Begin (TODO: elaborate) </param>
-        /// <param name="c">Change (TODO: elaborate) </param>
-        /// <param name="d">Duration (TODO: elaborate) </param>
-        /// <returns></returns>
+        /// <param name="t">Current time</param>
+        /// <param name="b">Beginning value</param>
+        /// <param name="c">Value change</param>
+        /// <param name="d">Duration</param>
+        /// <returns>Value at current time</returns>
         public delegate float EasingFunction(float t, float b, float c, float d);
 
         /// <summary>
@@ -109,19 +111,19 @@ namespace com.ganast.Tween {
         private RateLogic rateLogic;
 
         /// <summary>
-        /// Public-level API lock.
+        /// Public API lock.
         /// </summary>
         private object _lock = new object();
 
         /// <summary>
         /// Constructs a <see cref="BasicTween"/> for a range-limited variable.
         /// </summary>
-        /// <param name="v"></param>
-        /// <param name="vmin"></param>
-        /// <param name="vmax"></param>
-        /// <param name="easingFunction"></param>
-        /// <param name="rateLogic"></param>
-        /// <param name="r"></param>
+        /// <param name="v">TODO</param>
+        /// <param name="vmin">TODO</param>
+        /// <param name="vmax">TODO</param>
+        /// <param name="easingFunction">TODO</param>
+        /// <param name="rateLogic">TODO</param>
+        /// <param name="r">TODO</param>
         public BasicTween(float v, float vmin, float vmax, EasingFunction easingFunction, RateLogic rateLogic, float r) {
             this.easingFunction = easingFunction;
             this.rateLogic = rateLogic;
@@ -134,10 +136,10 @@ namespace com.ganast.Tween {
         /// <summary>
         /// Constructs a <see cref="BasicTween"/> for an non-limited variable.
         /// </summary>
-        /// <param name="v"></param>
-        /// <param name="easingFunction"></param>
-        /// <param name="rateLogic"></param>
-        /// <param name="r"></param>
+        /// <param name="v">TODO</param>
+        /// <param name="easingFunction">TODO</param>
+        /// <param name="rateLogic">TODO</param>
+        /// <param name="r">TODO</param>
         public BasicTween(float v, EasingFunction easingFunction, RateLogic rateLogic, float r) :
             this(v, UNLIMITED, UNLIMITED, easingFunction, rateLogic, r) {
         }
@@ -201,8 +203,7 @@ namespace com.ganast.Tween {
         /// <param name="dt">TODO</param>
         public void Update(float dt) {
 
-            // Debug.LogFormat("v={0}, v0={1}, v1={2}, dt={3}, t={4}", v, v0, v1, Time.time - t, t);
-
+            // Debug.LogFormat("v={0}, v0={1}, v1={2}, dt={3}, t={4}", v, v0, v1, dt, t);
             lock (_lock) {
 
                 if (!Equal(v, v1)) {
@@ -217,6 +218,11 @@ namespace com.ganast.Tween {
             }
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="value">TODO</param>
+        /// <param name="relative">TODO</param>
         private void SetImmediate(float value, bool relative = false) {
 
             if (relative) {
@@ -235,6 +241,11 @@ namespace com.ganast.Tween {
             t = 0.0f;
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="target">TODO</param>
+        /// <param name="relative">TODO</param>
         private void SetInterpolation(float target, bool relative = false) {
 
             v0 = v;
@@ -262,11 +273,22 @@ namespace com.ganast.Tween {
             }
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="target">TODO</param>
+        /// <param name="origin">TODO</param>
+        /// <param name="relative">TODO</param>
         private void SetInterpolation(float target, float origin, bool relative = false) {
             v = Sanitize(origin);
             SetInterpolation(target, relative);
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="f">TODO</param>
+        /// <returns>TODO</returns>
         public float Sanitize(float f) {
 
             if (!float.IsNaN(vmin) && f < vmin) {
@@ -282,6 +304,12 @@ namespace com.ganast.Tween {
             }
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="a">TODO</param>
+        /// <param name="b">TODO</param>
+        /// <returns>TODO</returns>
         public static bool Equal(float a, float b) {
             return Math.Abs(a - b) < 0.0001f;
         }

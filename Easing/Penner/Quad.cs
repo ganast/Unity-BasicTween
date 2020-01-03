@@ -1,5 +1,5 @@
-/// An implementation of smooth easing functions based on Unity Engine's
-/// Mathf.SmoothStep functionality.
+/// An implementation of R. Penner's quadratic easing equations (see
+/// http://robertpenner.com/easing and penner_easing_terms_of_use.txt).
 /// 
 /// Copyright (c) 2020 George Anastassakis (ganast@ganast.com)
 /// 
@@ -21,19 +21,15 @@
 /// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 /// IN THE SOFTWARE.
 
-using System;
-using UnityEngine;
-
-namespace com.ganast.Tween.Easing.UnityEngine {
+namespace com.ganast.Tween.Easing.Penner {
 
     /// <summary>
-    /// An implementation of smooth easing functions based on Unity Engine's
-    /// <see cref="Mathf.SmoothStep(float, float, float)"/>.
+    /// An implementation of R. Penner's quadratic easing equations.
     /// </summary>
-    public static class SmoothStep {
+    public static class Quad {
 
         /// <summary>
-        /// Smooth easing-in.
+        /// Quadratic easing-in.
         /// </summary>
         /// <param name="t">Current time</param>
         /// <param name="b">Beginning value</param>
@@ -41,11 +37,11 @@ namespace com.ganast.Tween.Easing.UnityEngine {
         /// <param name="d">Duration</param>
         /// <returns>Value at current time</returns>
         public static float EaseIn(float t, float b, float c, float d) {
-            throw new NotImplementedException();
+            return c * (t /= d) * t + b;
         }
 
         /// <summary>
-        /// Smooth easing-out.
+        /// Quadratic easing-out.
         /// </summary>
         /// <param name="t">Current time</param>
         /// <param name="b">Beginning value</param>
@@ -53,11 +49,11 @@ namespace com.ganast.Tween.Easing.UnityEngine {
         /// <param name="d">Duration</param>
         /// <returns>Value at current time</returns>
         public static float EaseOut(float t, float b, float c, float d) {
-            throw new NotImplementedException();
+            return -c * (t /= d) * (t - 2) + b;
         }
 
         /// <summary>
-        /// Smooth easing-in/out.
+        /// Quadratic easing-in/out.
         /// </summary>
         /// <param name="t">Current time</param>
         /// <param name="b">Beginning value</param>
@@ -65,7 +61,8 @@ namespace com.ganast.Tween.Easing.UnityEngine {
         /// <param name="d">Duration</param>
         /// <returns>Value at current time</returns>
         public static float EaseInOut(float t, float b, float c, float d) {
-            return Mathf.SmoothStep(b, b + c, Mathf.Clamp01(t / d));
+            if ((t /= d / 2) < 1) return c / 2 * t * t + b;
+            return -c / 2 * ((--t) * (t - 2) - 1) + b;
         }
     }
 }
