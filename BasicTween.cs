@@ -53,11 +53,6 @@ namespace com.ganast.Tween {
         }
 
         /// <summary>
-        /// A constant to indicate lack of limit.
-        /// </summary>
-        public const float UNLIMITED = float.NaN;
-
-        /// <summary>
         /// Value of the variable managed by this implementation.
         /// </summary>
         private float v;
@@ -90,12 +85,12 @@ namespace com.ganast.Tween {
         private float d;
 
         /// <summary>
-        /// Minimum value for range-limited variables.
+        /// Lower limit for range-limited variables.
         /// </summary>
         private float vmin;
 
         /// <summary>
-        /// Maximum value for range-limited variables.
+        /// Upper limit for range-limited variables.
         /// </summary>
         private float vmax;
 
@@ -119,17 +114,26 @@ namespace com.ganast.Tween {
         /// Constructs a <see cref="BasicTween"/> for a range-limited variable.
         /// </summary>
         /// <param name="v">TODO</param>
-        /// <param name="vmin">TODO</param>
-        /// <param name="vmax">TODO</param>
+        /// <param name="r0">TODO</param>
+        /// <param name="r1">TODO</param>
         /// <param name="easingFunction">TODO</param>
         /// <param name="rateLogic">TODO</param>
         /// <param name="r">TODO</param>
-        public BasicTween(float v, float vmin, float vmax, EasingFunction easingFunction, RateLogic rateLogic, float r) {
+        public BasicTween(float v, float r0, float r1, EasingFunction easingFunction, RateLogic rateLogic, float r) {
             this.easingFunction = easingFunction;
             this.rateLogic = rateLogic;
+            this.vmin = r0;
+            this.vmax = r1;
             this.r = r;
-            this.vmin = vmin;
-            this.vmax = vmax;
+
+            if (!float.IsNaN(vmin) && !float.IsNaN(vmax)) {
+                if (vmin > vmax) {
+                    float f = vmin;
+                    vmin = vmax;
+                    vmax = f;
+                }
+            }
+
             SetImmediate(v, false);
         }
 
@@ -141,7 +145,7 @@ namespace com.ganast.Tween {
         /// <param name="rateLogic">TODO</param>
         /// <param name="r">TODO</param>
         public BasicTween(float v, EasingFunction easingFunction, RateLogic rateLogic, float r) :
-            this(v, UNLIMITED, UNLIMITED, easingFunction, rateLogic, r) {
+            this(v, float.NaN, float.NaN, easingFunction, rateLogic, r) {
         }
 
         /// <summary>
@@ -203,10 +207,9 @@ namespace com.ganast.Tween {
         /// <param name="dt">TODO</param>
         public void Update(float dt) {
 
-            // Debug.LogFormat("v={0}, v0={1}, v1={2}, dt={3}, t={4}", v, v0, v1, dt, t);
             lock (_lock) {
 
-                if (!Equal(v, v1)) {
+                if ((v1 > v0 && v < v1) || (v1 < v0 && v > v1)) {
 
                     t += dt;
 
@@ -216,6 +219,7 @@ namespace com.ganast.Tween {
                     SetImmediate(v1, false);
                 }
             }
+
         }
 
         /// <summary>
