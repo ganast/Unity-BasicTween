@@ -209,7 +209,8 @@ namespace com.ganast.Tween {
 
             lock (_lock) {
 
-                if ((v1 > v0 && v < v1) || (v1 < v0 && v > v1)) {
+                // if ((v1 > v0 && v < v1) || (v1 < v0 && v > v1)) {
+                if (t < d) {
 
                     t += dt;
 
